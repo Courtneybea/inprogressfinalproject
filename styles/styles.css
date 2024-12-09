@@ -1,0 +1,66 @@
+body{
+    background-color: aliceblue;
+    color: black;
+    font-family: 'Times New Roman', Times, serif;
+}
+ h1, h2, h3, h4, h5, h6{
+color: crimson;
+font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+font-style: italic;
+
+
+ }
+.main-content{
+margin-left: 220px;
+padding: 20px;
+
+}
+
+.sidebar{
+    background-color: blue;
+    width: 200px;
+    height: 100%;
+    left: 0;
+    padding: 15px;
+    position: fixed;
+}
+
+.sidebar ul{
+    list-style: none;
+    padding: 0;
+}
+.sidebar ul li{
+    margin: 15px;
+}
+.sidebar ul li a{
+    color: aliceblue;
+    text-decoration: none;
+}
+.sidebar ul li a:hover{
+    text-decoration: underline;
+    color: black;
+}
+
+.navbar{
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color: aqua;
+}
+
+.navbar a{
+    color: white;
+}
+.navbar a:hover{
+    background-color: black;
+    border-radius: 5px;
+
+}
+
+.box-model{
+padding: 15px;
+background-color: darkred;
+border: 5px solid black;
+margin: 20px;
+}

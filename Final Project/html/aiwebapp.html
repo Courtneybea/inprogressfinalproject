@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Falling Stick Person Game</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #87ceeb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      border: 2px solid #000;
+      background: linear-gradient(to top, #87ceeb, #ffffff);
+      display: none;
+    }
+    .start-screen, .game-over {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #fff;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="start-screen">
+    <h1>Catch the Falling Stick Person!</h1>
+    <button id="startButton">Start Game</button>
+  </div>
+  <canvas id="gameCanvas" width="400" height="600"></canvas>
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const startScreen = document.querySelector('.start-screen');
+    const startButton = document.getElementById('startButton');
+
+    // Game settings
+    const stickPerson = { x: 0, y: 0, width: 20, height: 40, speed: 2 };
+    const platform = { x: canvas.width / 2 - 50, y: canvas.height - 50, width: 100, height: 10, speed: 5 };
+    let isGameOver = false;
+    let gameInterval;
+
+    function drawStickPerson(x, y) {
+      ctx.strokeStyle = 'black';
+      ctx.lineWidth = 2;
+
+      // Head
+      ctx.beginPath();
+      ctx.arc(x + 10, y + 10, 10, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Body
+      ctx.beginPath();
+      ctx.moveTo(x + 10, y + 20);
+      ctx.lineTo(x + 10, y + 40);
+      ctx.stroke();
+
+      // Arms
+      ctx.beginPath();
+      ctx.moveTo(x, y + 25);
+      ctx.lineTo(x + 20, y + 25);
+      ctx.stroke();
+
+      // Legs
+      ctx.beginPath();
+      ctx.moveTo(x + 10, y + 40);
+      ctx.lineTo(x, y + 55);
+      ctx.moveTo(x + 10, y + 40);
+      ctx.lineTo(x + 20, y + 55);
+      ctx.stroke();
+    }
+
+    function drawPlatform() {
+      ctx.fillStyle = 'brown';
+      ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+    }
+
+    function updateGame() {
+      if (isGameOver) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Move the stick person down
+      stickPerson.y += stickPerson.speed;
+
+      // Draw the stick person and platform
+      drawStickPerson(stickPerson.x, stickPerson.y);
+      drawPlatform();
+
+      // Check collision with the platform
+      if (
+        stickPerson.y + stickPerson.height >= platform.y &&
+        stickPerson.x + stickPerson.width > platform.x &&
+        stickPerson.x < platform.x + platform.width
+      ) {
+        resetStickPerson();
+      }
+
+      // Check if the stick person hits the ground
+      if (stickPerson.y > canvas.height) {
+        endGame();
+      }
+    }
+
+    function resetStickPerson() {
+      stickPerson.x = Math.random() * (canvas.width - stickPerson.width);
+      stickPerson.y = 0;
+    }
+
+    function endGame() {
+      isGameOver = true;
+      clearInterval(gameInterval);
+
+      const gameOverScreen = document.createElement('div');
+      gameOverScreen.classList.add('game-over');
+      gameOverScreen.innerHTML = `
+        <h1>Game Over! You lost!</h1>
+        <button id="restartButton">Restart</button>
+      `;
+      document.body.appendChild(gameOverScreen);
+
+      document.getElementById('restartButton').addEventListener('click', () => {
+        document.body.removeChild(gameOverScreen);
+        startGame();
+      });
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === 'ArrowLeft' && platform.x > 0) {
+        platform.x -= platform.speed;
+      } else if (event.key === 'ArrowRight' && platform.x < canvas.width - platform.width) {
+        platform.x += platform.speed;
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    function startGame() {
+      // Reset game state
+      isGameOver = false;
+      stickPerson.x = Math.random() * (canvas.width - stickPerson.width);
+      stickPerson.y = 0;
+      platform.x = canvas.width / 2 - platform.width / 2;
+
+      // Hide start screen and show canvas
+      startScreen.style.display = 'none';
+      canvas.style.display = 'block';
+
+      // Start game loop
+      gameInterval = setInterval(updateGame, 16);
+    }
+
+    startButton.addEventListener('click', startGame);
+  </script>
+</body>
+</html>
+
